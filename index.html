@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Krāsu loterija</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #4338ca;
+    }
+    .resultado {
+      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .aviso {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎨 Krāsu loterija</h1>
+    <p>Izvēlies savu vārdu, lai uzzinātu savu slepeno krāsu</p>
+
+    <select id="nombre">
+      <option value="">-- Izvēlies savu vārdu --</option>
+    </select>
+
+    <button onclick="asignarColor()">Parādīt manu krāsu</button>
+
+    <div class="resultado" id="resultado"></div>
+    <div class="aviso">⚠️ Tava krāsa tiks parādīta tikai tev</div>
+  </div>
+
+  <script>
+    const personas = [
+      "Karolīna", "Imants", "Rita", "Aigars", "Kristīne",
+      "Reinards", "Nadīna", "Māris", "Jūlija", "Jānis", "Katrīna"
+    ];
+
+    const colores = [
+      "Zils", "Sarkans", "Dzeltens", "Zaļš", "Rozā",
+      "Melns", "Balts", "Oranžs", "Violeta", "Brūns", "Zelta"
+    ];
+
+    const select = document.getElementById("nombre");
+    personas.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      select.appendChild(opt);
+    });
+
+    function asignarColor() {
+      const nombre = select.value;
+      if (!nombre) return alert("Lūdzu, izvēlies savu vārdu");
+
+      let asignaciones = JSON.parse(localStorage.getItem("asignaciones") || "{}");
+      let coloresDisponibles = JSON.parse(localStorage.getItem("coloresDisponibles") || "null");
+
+      if (!coloresDisponibles) {
+        coloresDisponibles = [...colores];
+      }
+
+      if (asignaciones[nombre]) {
+        document.getElementById("resultado").innerText = `🎉 Tava krāsa ir: ${asignaciones[nombre]}`;
+        return;
+      }
+
+      const index = Math.floor(Math.random() * coloresDisponibles.length);
+      const color = coloresDisponibles.splice(index, 1)[0];
+
+      asignaciones[nombre] = color;
+      localStorage.setItem("asignaciones", JSON.stringify(asignaciones));
+      localStorage.setItem("coloresDisponibles", JSON.stringify(coloresDisponibles));
+
+      document.getElementById("resultado").innerText = `🎉 Tava krāsa ir: ${color}`;
+    }
+  </script>
+</body>
+</html>
